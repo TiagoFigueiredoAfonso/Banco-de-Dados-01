@@ -1,0 +1,149 @@
+--1) Crie as tabelas com suas respectivas chaves. Deve ser entregue todo o código SQL da criação
+--das tabelas. [1,5 pontos]
+tipo (codigo, nome, idade_minima)
+jogador (codigo, nome, cpf, salario, data_cadastro)
+jogo (codigo, nome, data_lancamento, preco, codigo_tipo)
+jogador_jogo ( codigo_ jogador , codigo_ jogo, nivel)
+
+CREATE TABLE TIPO (
+	CODIGO SERIAL NOT NULL, 
+	NOME VARCHAR(50) NOT NULL, 
+	IDADE_MININA INT,
+	PRIMARY KEY(CODIGO)
+);
+
+CREATE TABLE JOGADOR (
+	CODIGO SERIAL NOT NULL,
+	NOME VARCHAR (50) NOT NULL, 
+	CPF varchar(11) UNIQUE NOT NULL, 
+	SALARIO numeric(10,2), 
+	DATA_CADASTRO DATE,
+	PRIMARY KEY (CODIGO)
+);
+
+CREATE TABLE JOGO(
+	CODIGO SERIAL NOT NULL, 
+	NOME VARCHAR(50) NOT NULL, 
+	DATA_LACAMENTO DATE, 
+	PRECO NUMERIC(10,2), 
+	CODIGO_TIPO INT,
+	PRIMARY KEY (CODIGO),
+	FOREIGN KEY (CODIGO_TIPO) REFERENCES TIPO(CODIGO)
+);
+
+CREATE TABLE JOGADOR_JOGO (
+	CODIGO_JOGADOR INT, 
+	CODIGO_JOGO INT, 
+	NIVEL INT,
+	PRIMARY KEY(CODIGO_JOGADOR, CODIGO_JOGO),
+	FOREIGN KEY(CODIGO_JOGADOR) REFERENCES JOGADOR(CODIGO),
+	FOREIGN KEY(CODIGO_JOGO) REFERENCES JOGO(CODIGO)
+);
+
+--2) Faça a inserção de 4 registros em cada tabela do exercício 1, fique atento para inserir os dados
+--necessários para a resolução dos próximos exercícios. [1,5 ponto]
+
+insert into tipo (nome, idade_minima)
+values('Clássico', 5);
+insert into tipo (nome, idade_minima)
+values('Ação', 5);
+insert into tipo (nome, idade_minima)
+values('Aventura', 5);
+insert into tipo (nome, idade_minina)
+values('Mistério', 14);
+
+insert into jogador (nome, cpf, salario, data_cadastro)
+values ('Tiago','11133344422', 4470.00, '2019-03-03');
+insert into jogador (nome, cpf, salario, data_cadastro)
+values ('Tamara','22233344411', 3170.00, '2014-04-01');
+insert into jogador (nome, cpf, salario, data_cadastro)
+values ('Jaime','44433344411', 1640.00, '2016-02-02');
+insert into jogador (nome, cpf, salario, data_cadastro)
+values ('Rafaela','55533344411', 940.00, '2020-01-05');
+insert into jogador (nome, cpf, salario, data_cadastro)
+values ('Gabriela','67633344411', 5640.00, '2001-08-07');
+insert into jogador (nome, cpf, salario, data_cadastro)
+values ('Giorgina', '77733344411', 1200.00, '2018-04-04');
+insert into jogador (nome, cpf, salario, data_cadastro)
+values ('Marília', '78833344411', 1500.00, '2018-05-12');
+
+insert into jogo (nome, data_lacamento, preco, codigo_tipo)
+values ('Tetris','1984-07-07', 63.00, 1);
+insert into jogo (nome, data_lacamento, preco, codigo_tipo)
+values ('Pac Man','1980-07-12', 39.90, 1);
+insert into jogo (nome, data_lacamento, preco, codigo_tipo)
+values ('Galaxian','1979-11-12', 230.00, 2);
+insert into jogo (nome, data_lacamento, preco, codigo_tipo)
+values ('Space Invaders','1978-03-05', 170.00, 2);
+insert into jogo (nome, data_lacamento, preco, codigo_tipo)
+values ('Donkey Kong','1994-04-09', 470.00, 3);
+
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(1, 1, 3);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(1, 2, 3);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(2, 2, 2);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(3, 3, 1);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(3, 1, 2);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(4, 5, 5);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(5, 4, 3);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(6, 1, 3);
+insert into jogador_jogo (codigo_jogador, codigo_jogo, nivel)
+values(7, 1, 3);
+
+--3) Selecione o nome e o salário do jogador, o nome do jogo que ele joga, seu nível e o nome do tipo
+--do jogo. Somente jogadores com o nome que possua a letra ‘t’, que possuem o salário entre R$
+--1000,00 e R$ 4000,00 devem ser mostrados. [1,5 ponto]
+
+SELECT JG.NOME, JG.SALARIO, J.NOME, JGJ.NIVEL, TP.NOME
+FROM JOGADOR JG JOIN JOGADOR_JOGO JGJ ON JG.CODIGO = JGJ.CODIGO_JOGADOR
+		JOIN  JOGO J ON J.CODIGO = JGJ.CODIGO_JOGO
+		JOIN TIPO TP ON TP.CODIGO = J.CODIGO_TIPO 
+		AND JG.SALARIO BETWEEN 1000 AND 4000
+		AND JG.NOME ILIKE '%t%';
+
+--4) Selecione a quantidade de jogadores de Tetris. Renomeie a saída.  [1,0 pontos]
+
+SELECT COUNT(*) AS JOGADORES_TETRIS
+FROM JOGADOR JG JOIN JOGADOR_JOGO JGJ ON JG.CODIGO = JGJ.CODIGO_JOGADOR
+		JOIN  JOGO J ON J.CODIGO = JGJ.CODIGO_JOGO
+		WHERE J.NOME LIKE 'Tetris';
+
+--5) Selecione a idade média dos tipos de jogos. A média deve ter precisão de dois números (truncar) .
+--Renomeie as saídas. [1,0 ponto]
+
+SELECT TRUNC(AVG(TP.IDADE_MININA),2) AS MEDIA_IDADE
+FROM TIPO TP;
+		
+--6) Selecione o nome dos jogos, cujos nomes terminam com a letra ‘s’ e possuem no máximo 6 letras
+--no nome. Devem ser informados somente nomes de jogos do tipo Clássico. [1,0 ponto]
+
+SELECT J.NOME
+FROM JOGO J JOIN TIPO TP ON TP.CODIGO = J.CODIGO_TIPO
+WHERE J.NOME ILIKE '_____S%'
+AND TP.NOME ILIKE 'CLÁSSICO';
+		
+--7) No sistema existem diversos tipos cadastrados, porém foi solicitado dados somente dos tipos
+--Clássico, Ação e Aventura. Com base no que foi informado, selecione a soma das idades mínimas
+--dos tipos solicitados. A saída deve ser renomeada. [1,0 ponto]
+		
+SELECT SUM(TP.IDADE_MININA) AS SOMA_IDADES_MINIMAS
+FROM TIPO TP 					
+WHERE NOT(TP.NOME ILIKE 'MISTÉRIO'); 
+
+--8) Selecione o nome, cpf, data de cadastro e salário dos jogadores que jogam Tetris, cadastrados
+--após 2018, que recebem menos de R$ 4000,00. Ordene a saída pela data de cadastro. [1,5 ponto]
+
+SELECT JG.NOME, JG.CPF, JG.DATA_CADASTRO, JG.SALARIO
+FROM JOGADOR JG JOIN JOGADOR_JOGO JGJ ON JG.CODIGO = JGJ.CODIGO_JOGADOR
+		JOIN  JOGO J ON J.CODIGO = JGJ.CODIGO_JOGO
+		WHERE JG.DATA_CADASTRO > '2017-12-31'
+		AND J.NOME ILIKE 'TETRIS'
+		AND JG.SALARIO < 4000
+		ORDER BY JG.DATA_CADASTRO;
