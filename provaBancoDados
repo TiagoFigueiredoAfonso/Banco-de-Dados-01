@@ -1,0 +1,63 @@
+3) Criar uma tabela de nome vacina com os seguintes atributos: [0,75 ponto]
+
+create table vacina (
+		codigo serial not null, 
+		nome varchar(20) not null, 
+		preco numeric(20,2), 
+		data_criacao date, 
+		doenca varchar(20),
+		primary key(codigo)
+);
+
+
+4) Faça a inserção de quatro vacinas na tabela, todo o sql de inserção deve ser entregue. Dica: faça
+a inserção dos dados necessários para as próximas questões. [0,75 ponto]
+
+insert into vacina(nome, preco, data_criacao, doenca)
+values ('Dupla Viral', 70, '2001-03-07', 'Coqueluche');
+insert into vacina(nome, preco, data_criacao, doenca)
+values ('Astrazeneca', 170, '2020-08-17', 'Covid-19');
+insert into vacina(nome, preco, data_criacao, doenca)
+values ('Pólio', 270, '1994-04-07', 'Paralisia Infantil');
+insert into vacina(nome, preco, data_criacao, doenca)
+values ('Hepatite B ', 470, '1999-07-12', 'Hepatite B');
+
+5) Selecione as vacinas com preço menor que R$ 250,00 destinadas para Covid-19 
+
+select *
+from vacina v
+where v.preco > 250; !! and.vdoenca =  'covid-19'ERRO!
+
+6) Selecione o nome, preço, data de criação e doença das vacinas.
+select v.nome, v.preco, v.data_criacao, v.doenca
+from vacina v;
+
+7) Selecione o nome das vacinas para gripe
+
+select v.nome
+from vacina v;
+where v.doenca = 'Gripe' <- ERRO eu nao pus
+
+8) A vacina de nome Dupla Viral foi melhorada, passou a se chamar Tríplice Viral e teve aumento de
+25%. Faça o SQL necessário para consolidar está alteração no banco de dados. 
+
+update vacina 
+set nome = 'Triplice Viral'
+where nome = 'Dupla Viral';
+
+update vacina
+set preco = preco * 1.25
+where nome = 'Triplice Viral';
+
+ERRO 8 FAZER AS MODIFICAÇÕES NA MESMA LINHA ALI NO SET COM VIRGULA
+
+9) A Covid-19 foi erradicada, por este motivo todas as vacinas desta doença devem ser removidas
+do banco de dados.
+
+delete from vacina
+where nome = 'Astrazeneca'; <- ERA PRA REMOVER A COVID 19 ERRO!
+
+10) O atributo preco deve ser renomeado para preco_venda.
+
+alter table vacina rename column preco to preco_venda;
+
