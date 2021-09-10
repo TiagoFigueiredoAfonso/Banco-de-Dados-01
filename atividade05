@@ -1,0 +1,77 @@
+--1) Criar uma tabela de nome colaborador com os seguintes atributos:
+--colaborador(codigo, nome, data_contratacao, cargo, salario)
+
+create table colaborador(
+		codigo serial not null, 
+		nome varchar(50) not null, 
+		data_contratacao varchar(10), 
+		cargo varchar(50), 
+		salario numeric(10,2),
+		primary key(codigo)
+);
+
+--2)Faça a inserção de três colaboradores na tabela, todo o sql de inserção deve ser
+--entregue.
+
+insert into colaborador(nome, data_contratacao, cargo, salario)
+values ('Mateus','2020/07/07','vendedor', 1200.00);
+insert into colaborador(nome, data_contratacao, cargo, salario)
+values('Maria', '2020/07/12','caixa', 1100.00);
+insert into colaborador(nome, data_contratacao, cargo, salario)
+values('Marta', '2017/03/07','gerente', 4130.00);
+
+--3) Selecione todos os colaboradores. 
+
+select *
+from colaborador f;
+
+--4) Selecione os colaboradores com salário menor que R$ 1900,00.
+
+select f.nome
+from colaborador f
+where f.salario < 1900;
+
+--5) Selecione o nome e o cargo dos colaboradores.
+
+select f.nome, f.cargo
+from colaborador f;
+
+--6) Selecione o nome do gerente.
+
+select f.nome
+from colaborador f
+where f.cargo = 'gerente';
+
+--7) Todos os colaboradores ganharam aumento de 9% na sua renda.
+
+update colaborador
+set salario = salario * 1.09;
+
+--8) Todos os gerentes perderam 3% da sua renda.
+
+update colaborador
+set salario = salario * 0.97
+where cargo = 'gerente';
+--9) Todas os colaboradores com renda maior que R$ 7000,00 foram excluídos do
+--sistema.
+
+delete from colaborador
+where salario > 7000.00;
+--10) Um novo gerente foi cadastrado, o nome dela é Ciclano da Silva, foi contratado
+--hoje e recebe R$ 9999,88.
+
+update colaborador
+set data_contratacao = '2021/03/03'
+where nome = 'Ciclano da Silva';
+
+--11) Adicione o atributo data_nascimento na tabela colaboradores
+
+alter table colaborador add data_nascimento
+   varchar(10);
+   
+--12) Remova a tabela colaborador  
+
+drop table colaborador;
+
+
+
