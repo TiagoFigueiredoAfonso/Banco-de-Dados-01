@@ -1,0 +1,132 @@
+cliente (codigo, nome, cpf, renda, data_nascimento)
+ferramenta( codigo, nome, valor, descricao)
+compra (codigo, valor_total, data, codigo_cliente)
+compra_ferramenta ( codigo_compra, codigo_ ferramenta, quantidade)
+
+--TESTE DE CODIGO COM JOIN
+SELECT C.NOME, COMP.DATA, C_FER.QUANTIDADE, FER.NOME, FER.VALOR, COMP.VALOR_TOTAL
+FROM CLIENTE C JOIN COMPRA COMP
+	ON C.CODIGO = COMP.CODIGO_CLIENTE
+	JOIN COMPRA_FERRAMENTA C_FER
+	ON COMP.CODIGO = C_FER.CODIGO_COMPRA
+	JOIN FERRAMENTA FER
+	ON FER.CODIGO = C_FER.CODIGO_FERRAMENTA;
+
+--1) Crie o banco de dados abaixo. Deve ser entregue todo o código SQL da criação das
+--tabelas e da base de dados.
+
+create table cliente (
+		  codigo serial not null, 
+		  nome varchar(20) not null, 
+		  cpf varchar (11) unique, 
+		  renda numeric (10,2), 
+		  data_nascimento date,
+		  primary key (codigo)
+);
+--2) Faça a inserção de 3 registros em cada tabela do exercício 1, fique atento para inserir
+--os dados necessários para a resolução dos próximos exercícios.
+
+insert into cliente (nome, cpf, renda, data_nascimento) values ('Marcos','02102202302',1700, '2017-05-06');
+insert into cliente (nome, cpf, renda, data_nascimento) values('Maria', '02102202301', 1400, '2012-05-07');
+insert into cliente (nome, cpf, renda, data_nascimento) values ('Mateus', '02123455667', 1200, '2014-01-07');
+
+
+select *
+from cliente clt;
+
+create table ferramenta( 
+		codigo serial not null, 
+		nome varchar (20), 
+		valor numeric (10,2), 
+		descricao varchar (20),
+		primary key (codigo)
+);
+
+insert into ferramenta (nome, valor, descricao) values ('alicate', '70', 'Peso máx. 1kg');
+insert into ferramenta (nome, valor, descricao) values ('furadeira','130', 'Contém 6 brocas');
+insert into ferramenta (nome, valor, descricao) values ('Chave de fenda', '32', 'Cabo de plástico');
+
+select *
+from ferramenta fer;
+
+create table compra (
+		codigo serial not null, 
+		valor_total numeric (10,2), 
+		data date, 
+		codigo_cliente int,
+		primary key(codigo),
+		foreign key(codigo_cliente) references cliente(codigo)
+);
+
+insert into compra(valor_total, data, codigo_cliente)values(70,'2021-01-03','2');
+insert into compra(valor_total, data, codigo_cliente)values(200, '2020-12-02','3');
+insert into compra(valor_total, data, codigo_cliente)values(32, '2020-12-12', '4');
+
+select *
+from compra comp;
+
+create table compra_ferramenta( 
+	 codigo_compra int, 
+	 codigo_ferramenta int, 
+	 quantidade int, -- aqui é int
+	 primary key (codigo_compra, codigo_ferramenta),
+	 foreign key (codigo_compra) references compra(codigo),
+	 foreign key (codigo_ferramenta) references ferramenta(codigo)
+);
+insert into compra_ferramenta(codigo_compra, codigo_ferramenta, quantidade)
+values ('1', '1', '2');
+insert into compra_ferramenta(codigo_compra, codigo_ferramenta, quantidade)
+values ('2', '2', '1');
+insert into compra_ferramenta(codigo_compra, codigo_ferramenta, quantidade)
+values ('3', '3', '1');
+
+select *
+from compra_ferramenta compfer;
+
+--3) Selecione todas as ferramentas. 
+
+select fer.nome
+from ferramenta fer;
+
+--4) Selecione os clientes com renda maior que R$ 2000,00.
+
+select *
+from cliente clt
+where clt.renda > 2000;
+
+--5) Selecione o nome dos clientes nascidos após 10/10/2000 e com renda menor que $
+--5000,00.
+
+select clt.nome, clt.renda
+from cliente clt
+where clt.data_nascimento > '2000-10-10' and clt.renda < 5000;
+
+--6) O Alicate ganhou desconto de 25% por causa de uma liquidação.
+
+update ferramenta
+set valor = valor * 0.75
+where nome = 'alicate';
+
+select *
+from ferramenta fer;
+
+--7) A ferramenta Alicate não é mais vendida. Faça todos os SQL necessários para
+--remoção.
+
+
+delete from compra_ferramenta 
+where codigo_ferramenta in (
+ select codigo_ferramenta from ferramenta where codigo_ferramenta = 5
+);
+
+delete from ferramenta
+where nome = 'alicate';
+
+select * from ferramenta f;
+
+-- codigo do professor !!
+delete from compra_ferramenta
+where codigo_ferramenta  = 3
+
+delete from ferramenta
+where nome = 'Chave de fenda';
