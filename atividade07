@@ -1,0 +1,164 @@
+profissao(codigo,nome)
+pessoa (codigo, nome, cpf, salario, data_nascimento, codigo_profissao)
+produto( codigo, nome, preco)
+compra (codigo, valor_total, data, codigo_pessoa)
+compra_produto (codigo_compra, codigo_produto, quantidade)
+
+1) Selecione o nome, o cpf e o valor total das compras das pessoas.
+
+select p.nome, p.cpf, c.valor_total
+from pessoa p , compra c;
+
+2) Selecione o nome, salario e o nome da profissão das pessoas que tem salário
+maior do que 1000.
+
+select p.nome, p.salario, pf.nome
+from pessoa p 
+	join profissao pf on pf.codigo  = p.codigo_profissao --PROFESSOR CORRIGIU, CODIGO PRIMARY PARA ESTRANGEIRO
+where p.salario > 1000;
+	
+	
+3) Selecione o valor total das compras, a data, os produtos comprados e as
+quantidades.
+
+
+select c.valor_total, c.data, pdt.nome, cp.quantidade
+from compra c 
+	join compra_produto cp 	on c.codigo = cp.codigo_compra
+	join produto pdt on pdt.codigo = cp.codigo_produto;
+
+
+4) Selecione o nome da pessoa, seu cpf, sua profissão, data das compras, valor_total
+das compras, os produtos comprados e as quantidades.
+
+profissao(codigo,nome)
+pessoa (codigo, nome, cpf, salario, data_nascimento, codigo_profissao)
+produto( codigo, nome, preco)
+compra (codigo, valor_total, data, codigo_pessoa)
+compra_produto (codigo_compra, codigo_produto, quantidade)
+--nome pessoa cpf, profissao, data das compras, valor_total compras, produtos comprados, quantidade
+
+select p.nome, p.cpf, prof.nome, comp.data, comp.valor_total
+from pessoa p, profissao prof, compra comp
+where p.codigo = comp.codigo_pessoa;
+                                                 --prof              prof              prof   pq eu esqueci                  
+select p.nome, p.cpf, prof.nome, comp.data, comp.valor_total, comp_prod.quantidade, prod.nome
+from pessoa p 
+	join profissao prof	on prof.codigo = p.codigo_profissao
+	join compra comp on p.codigo = comp.codigo_pessoa
+	join compra_produto comp_prod on comp.codigo = comp_prod.codigo_compra --professor que fez
+	join produto prod on prod.codigo = comp_prod.codigo_produto;-- professor que fez
+
+select p.nome, p.cpf, prof.nome, c.data, c.valor_total, pdt.nome, c_pro.quantidade
+from pessoa p join profissao prof
+	on prof.codigo = p.codigo_profissao
+	join compra c
+	on p.codigo = c.codigo_pessoa
+	join compra_produto c_pro
+	on c.codigo = c_pro.codigo_compra
+	join produto pdt
+	on pdt.codigo = c_pro.codigo_produto;
+	
+	select p.nome, p.cpf
+	from pessoa p;
+	
+5) Selecione as pessoas com mais de 18 anos (considere a data de hoje para o
+calculo), suas profissões, valor total e data de suas compras. Selecione somente
+as compras com valor_total maior que o salário da pessoa.
+
+profissao(codigo,nome)
+pessoa (codigo, nome, cpf, salario, data_nascimento, codigo_profissao)
+produto( codigo, nome, preco)
+compra (codigo, valor_total, data, codigo_pessoa)
+compra_produto (codigo_compra, codigo_produto, quantidade)
+
+select p.data_nascimento
+from pessoa p
+where data_nascimento  'currente_date';
+
+
+
+6) Selecione os dados dos professores que possuem salário entre R$ 1000,00 e R$
+2000,00
+
+CREATE TABLE profissao
+( codigo serial NOT NULL,
+nome varchar(50) NOT NULL,
+primary key (codigo)
+);
+
+CREATE TABLE pessoa
+( codigo serial NOT NULL,
+nome varchar(50) NOT NULL,
+cpf varchar(11) UNIQUE NOT NULL,
+salario numeric(10,2),
+data_nascimento date,
+codigo_profissao int,
+primary key (codigo),
+FOREIGN KEY(codigo_profissao) REFERENCES profissao(codigo)
+);
+
+CREATE TABLE compra
+( codigo serial NOT NULL,
+valor_total numeric(10,2),
+data timestamp,
+codigo_pessoa int,
+primary key (codigo),
+FOREIGN KEY(codigo_pessoa) REFERENCES pessoa(codigo)
+);
+
+CREATE TABLE produto
+( codigo serial NOT NULL,
+nome varchar(50) NOT NULL,
+preco numeric(10,2),
+primary key (codigo)
+);
+
+CREATE TABLE compra_produto
+( codigo_compra int,
+ codigo_produto int,
+ quantidade int,
+primary key (codigo_compra, codigo_produto),
+FOREIGN KEY(codigo_compra) REFERENCES compra(codigo),
+FOREIGN KEY(codigo_produto) REFERENCES produto(codigo)
+);
+
+insert into profissao (nome) values ('Tecnologia da Informação');
+insert into profissao (nome) values ('Pedreiro');
+insert into profissao (nome) values ('DBA');
+insert into profissao (nome) values ('Professor');
+
+insert into pessoa(nome, cpf, salario, data_nascimento, codigo_profissao)
+values ('Tomas','11133344422', 5500.00, '12/09/1990', 1);
+insert into pessoa(nome, cpf, salario, data_nascimento, codigo_profissao)
+values ('Jaqueline', '22233344411', 70000.00, '25/10/1985', 3);
+insert into pessoa(nome, cpf, salario, data_nascimento, codigo_profissao)
+values ('Pedro', '99233344411', 3000.00, '25/10/1960', 3);
+insert into pessoa(nome, cpf, salario, data_nascimento, codigo_profissao)
+values ('João Silva','44133344422', 7000.00, '12/09/1977', 1);
+insert into pessoa(nome, cpf, salario, data_nascimento, codigo_profissao)
+values ('Fulano','14133344422', 1500.00, '12/09/1988', 4);
+
+insert into produto( nome, preco)
+values('Refrigerante', 7.70);
+insert into produto ( nome, preco)
+values('Cerveja', 10.0);
+insert into produto ( nome, preco)
+values('Picanha', 75 );
+insert into produto ( nome, preco)
+values('Frango', 20);
+insert into produto ( nome, preco)
+values('Molho de tomate', 4);
+insert into produto ( nome, preco)
+values('Chocolate', 100);
+
+insert into compra (valor_total, data, codigo_pessoa)
+values(175, current_timestamp(0), 1 );
+insert into compra_produto( codigo_compra, codigo_produto,quantidade)
+values(1,6, 1);
+insert into compra_produto( codigo_compra, codigo_produto, quantidade)
+values(1,3, 1);
+insert into compra (valor_total, data, codigo_pessoa)
+values(400, current_timestamp(0), 1 );
+insert into compra_produto( codigo_compra, codigo_produto, quantidade)
+values(2,6, 4); 
